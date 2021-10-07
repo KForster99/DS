@@ -1,32 +1,41 @@
 <?php
-
+error_reporting(E_ERROR | E_PARSE);
 $en_text = "ATTACKATDAWN";
 $de_text = "FBGBF";
-$secret = "LEMONLEMONLE";
+$secret  = "LEMONLEMONLE";
 
 function encrypt($text, $secret)
 {
+    echo $text . "<br>";
+    echo $secret . "<br>";
     for ($i = 0; $i < strlen($text); $i++) {
-        $array_text[$i] = $text[$i];
-        $array_secret[$i] = $secret[$i];
-        $text_int[$i] = ord("$array_text[$i]");
-        $secret_int[$i] = ord("$array_secret[$i]");
-        //echo $text_int[$i]."/".$secret_int[$i];
+        $text_int[$i] = ord("$text[$i]");
+        $secret_int[$i] = ord("$secret[$i]");
+        echo "ord: " . $text_int[$i] . " / " . $secret_int[$i] . "<br>";
+
         $text_int[$i] = $text_int[$i] - 65;
         $secret_int[$i] = $secret_int[$i] - 65;
-        //echo $text_int[$i]."/".$secret_int[$i];
+        echo "-65: " . $text_int[$i] . " / " . $secret_int[$i] . "<br>";
+
         $text_bi[$i] = decbin($text_int[$i]);
         $secret_bi[$i] = decbin($secret_int[$i]);
-        $int_text = (int)$text_bi[$i];
-        $int_secret = (int)$secret_bi[$i];
-        $xor[$i] = $int_text ^ $int_secret;
+        echo "decbin: " . $text_bi[$i] . " / " . $secret_bi[$i] . "<br>";
+
+        // $int_text = (int)$text_bi[$i];
+        // $int_secret = (int)$secret_bi[$i];
+        // echo "(int)decbin: " . $int_text . " / " . $int_secret . "<br>";
+
+        $xor[$i] = intval($text_bi[$i]) ^ intval($secret_bi[$i]);
+        // echo $int_text ^ $int_secret . "<br>";
+        echo "xor: " . $xor[$i]  . "<br>";
+
         $text_newint[$i] = bindec($xor[$i]) + 65;
+        echo "bindec: " . $text_newint[$i] . "<br>";
+
         $text_new[$i] = chr($text_newint[$i]);
-        echo  $text_new[$i];
-        //echo "<br>";
+        echo  $text_new[$i] . "<br><br>";
     }
 }
-//echo enencrypt($en_text, $arr_secret) . "          ";
 
 function decrypt($text, $secret)
 {
@@ -48,5 +57,5 @@ function decrypt($text, $secret)
     }
 }
 encrypt($en_text, $secret);
-echo"<br>";
-decrypt($de_text, $secret)." ";
+echo "<br>";
+decrypt($de_text, $secret);
