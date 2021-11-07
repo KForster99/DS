@@ -1,65 +1,129 @@
 <?php
-$en_text = "HELLODFGHsd5115";
-$de_text = "!qnvzmw|l[ULvAu";
+$en_text = "HELLODFGHsd5115567895124tyftfyfdsgagd";
+$de_text = "0(/'#.41-44-w tM[TSU_CDQ3)~2w8?*1-..7";
 $secret  = "XMCKLJRVEgp8f1a";
-
-//$en_text = "ANT";
-//$de_text = "FBG";
-//$secret = "FMV";
 
 function encrypt_oneTime($text, $secret)
 {
+    clearstatcache();
+    $array_text = str_split($text);
+    $array_secret = str_split($secret);
     $ciphertext = "";
-    if (strlen($text) - strlen($secret) > 0) {
-        $num = strlen($text) - strlen($secret);
-        $len_secret = strlen($secret);
-        for ($k = 1; $k <= $num; $k++) {
-            $secret[$len_secret + $k] = $secret[$k - 1];
+    if (count($array_text) - count($array_secret) > 0) {
+        $num = count($array_text) - count($array_secret);
+        $len_secret = count($array_secret);
+
+        for ($k = 0; $k < $num; $k++) {
+            $array_secret[$len_secret + $k] = $array_secret[$k];
         }
     }
+
+    print_r($array_text); echo "<br>";
+    print_r($array_secret); echo "<br>";
+
     for ($i = 0; $i < strlen($text); $i++) {
-        $array_text[$i] = $text[$i];
-        $array_secret[$i] = $secret[$i];
+        clearstatcache();
         $text_int[$i] = ord($array_text[$i]) - 32;
         $secret_int[$i] = ord($array_secret[$i]) - 32;
-        $text_secret[$i] = $text_int[$i] + $secret_int[$i];
-        $text_secret[$i] = ($text_secret[$i] % 95) + 32;
-        $new_text[$i] = chr($text_secret[$i]);
-        // echo $new_text[$i] . "";
-        $ciphertext .= $new_text[$i] . "";
-    }
-    return $ciphertext;
-}
+        echo "ord: " . $text_int[$i] . " / " . $secret_int[$i] . "<br>";
 
-function decrypt_oneTime($text, $secret)
-{
-    $plaintext = "";
-    if (strlen($text) - strlen($secret) > 0) {
-        $num = strlen($text) - strlen($secret);
-        $len_secret = strlen($secret);
-        for ($k = 1; $k <= $num; $k++) {
-            $secret[$len_secret + $k] = $secret[$k - 1];
+        $text_bin[$i] = decbin($text_int[$i]);
+        $secret_bin[$i] = decbin($secret_int[$i]);
+        echo "bin: " . $text_bin[$i] . " / " . $secret_bin[$i] . "<br>";
+
+        $text_spit = str_split($text_bin[$i]);
+        $secret_spit = str_split($secret_bin[$i]);
+        print_r($text_spit);
+        echo "<br>";
+        print_r($secret_spit);
+        echo "<br>";
+        $x = count($text_spit);
+        $y = count($secret_spit);
+
+        if ($x > $y) {
+            $z = $x - $y;
+            for ($j = 0; $j < $z; $j++) {
+                $sum[$j] = $text_spit[$j];
+                echo $sum[$j] . " ";
+            }
+            for ($j = 0; $z < $x; $j++, $z++) {
+                if ($text_spit[$z] == 0 && $secret_spit[$j] == 0)
+                    $sum[$z] = 0;
+                else if ($text_spit[$z] == 1 && $secret_spit[$j] == 1)
+                    $sum[$z] = 0;
+                else if ($text_spit[$z] == 0 && $secret_spit[$j] == 1)
+                    $sum[$z] = 1;
+                else if ($text_spit[$z] == 1 && $secret_spit[$j] == 0)
+                    $sum[$z] = 1;
+
+                echo $sum[$z] . " ";
+            }
+            echo "<br>";
+        } else if ($y > $x) {
+            $z = $y - $x;
+
+            for ($j = 0; $j < $z; $j++) {
+                $sum[$j] = $secret_spit[$j];
+                echo $sum[$j] . " ";
+            }
+            for ($j = 0; $z < $y; $j++, $z++) {
+                if ($text_spit[$j] == 0 && $secret_spit[$z] == 0)
+                    $sum[$z] = 0;
+                else if ($text_spit[$j] == 1 && $secret_spit[$z] == 1)
+                    $sum[$z] = 0;
+                else if ($text_spit[$j] == 0 && $secret_spit[$z] == 1)
+                    $sum[$z] = 1;
+                else if ($text_spit[$j] == 1 && $secret_spit[$z] == 0)
+                    $sum[$z] = 1;
+
+                echo $sum[$z] . " ";
+            }
+            echo "<br>";
+        } else {
+            for ($j = 0; $j < $x; $j++) {
+                if ($text_spit[$j] == 0 && $secret_spit[$j] == 0)
+                    $sum[$j] = 0;
+                else if ($text_spit[$j] == 1 && $secret_spit[$j] == 1)
+                    $sum[$j] = 0;
+                else if ($text_spit[$j] == 0 && $secret_spit[$j] == 1)
+                    $sum[$j] = 1;
+                else if ($text_spit[$j] == 1 && $secret_spit[$j] == 0)
+                    $sum[$j] = 1;
+
+                echo $sum[$j] . " ";
+            }
+            echo "<br>";
         }
+        print_r($sum);
+        echo "<br>";
+
+
+        $text_secret[$i] = implode("", $sum);
+        print_r($text_secret);
+        echo "<br>";
+
+        $text_secret[$i] = bindec($text_secret[$i]);
+        print_r($text_secret);
+        echo "<br>";
+
+        $text_secret[$i] = ($text_secret[$i] % 95) + 32;
+        print_r($text_secret);
+        echo "<br>";
+
+        $new_text[$i] = chr($text_secret[$i]);
+        echo $new_text[$i] . "<br><br><br>";
+        $ciphertext .= $new_text[$i] . "";
+        unset($sum);
+        unset($text_spit);
+        unset($secret_spit);
     }
-    for ($j = 0; $j < strlen($text); $j++) {
-        $array_text[$j] = $text[$j];
-        $array_secret[$j] = $secret[$j];
-        $text_int[$j] = ord($array_text[$j]) - 32;
-        $secret_int[$j] = ord($array_secret[$j]) - 32;
-        if ($text_int[$j] - $secret_int[$j] < 0) {
-            $text_int[$j] = $text_int[$j] + 95;
-        }
-        $text_secret[$j] = $text_int[$j] - $secret_int[$j];
-        $text_secret[$j] = ($text_secret[$j] % 95) + 32;
-        $new_text[$j] = chr($text_secret[$j]);
-        // echo $new_text[$j] . "";
-        $plaintext .= $new_text[$j] . "";
-    }
-    return $plaintext;
+    print_r($ciphertext);
+    echo "<br><br>";
+    return $ciphertext;
 }
 
 //echo "en_text=ATTACKATDAWN || secret=LEMONLEMONLE" . "<br>";
 encrypt_oneTime($en_text, $secret);
 echo "<br> <br>";
 //echo "de_text=LXAOCBEAHNAC || secret=LEMONLEMONLE" . "<br>";
-decrypt_oneTime($de_text, $secret);
+encrypt_oneTime($de_text, $secret);
