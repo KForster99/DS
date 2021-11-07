@@ -1,42 +1,33 @@
 <?php
-$en_text = "HELLODFGHsd5115567895124tyftfyfdsgagd";
-$de_text = "0(/'#.41-44-w tM[TSU_CDQ3)~2w8?*1-..7";
-$secret  = "XMCKLJRVEgp8f1a";
+$en_text = "THISISABOOKIMAPENIHAVEGAMEILOVEYOUASDASDZZ";
+$de_text = "TVLDOADHO]JI_D_C`LBAHHGSPVOZNTEKNUSRSGAA`Z";
+$secret  = "ASDRGSDGASD";
 
 function encrypt_oneTime($text, $secret)
 {
     clearstatcache();
-    $array_text = str_split($text);
-    $array_secret = str_split($secret);
     $ciphertext = "";
-    if (count($array_text) - count($array_secret) > 0) {
-        $num = count($array_text) - count($array_secret);
-        $len_secret = count($array_secret);
-
+    if (strlen($text) - strlen($secret) > 0) {
+        $num = strlen($text) - strlen($secret);
+        $len_secret = strlen($secret);
         for ($k = 0; $k < $num; $k++) {
-            $array_secret[$len_secret + $k] = $array_secret[$k];
+            $secret[$len_secret + $k] = $secret[$k];
         }
     }
-
-    print_r($array_text); echo "<br>";
-    print_r($array_secret); echo "<br>";
+    echo $text . "<br>";
+    echo $secret . "<br>";
+    echo "<br>";
 
     for ($i = 0; $i < strlen($text); $i++) {
-        clearstatcache();
-        $text_int[$i] = ord($array_text[$i]) - 32;
-        $secret_int[$i] = ord($array_secret[$i]) - 32;
-        echo "ord: " . $text_int[$i] . " / " . $secret_int[$i] . "<br>";
+        $text_int[$i] = ord($text[$i]) - 65;
+        $secret_int[$i] = ord($secret[$i]) - 65;
 
         $text_bin[$i] = decbin($text_int[$i]);
         $secret_bin[$i] = decbin($secret_int[$i]);
-        echo "bin: " . $text_bin[$i] . " / " . $secret_bin[$i] . "<br>";
 
         $text_spit = str_split($text_bin[$i]);
         $secret_spit = str_split($secret_bin[$i]);
-        print_r($text_spit);
-        echo "<br>";
-        print_r($secret_spit);
-        echo "<br>";
+
         $x = count($text_spit);
         $y = count($secret_spit);
 
@@ -44,7 +35,6 @@ function encrypt_oneTime($text, $secret)
             $z = $x - $y;
             for ($j = 0; $j < $z; $j++) {
                 $sum[$j] = $text_spit[$j];
-                echo $sum[$j] . " ";
             }
             for ($j = 0; $z < $x; $j++, $z++) {
                 if ($text_spit[$z] == 0 && $secret_spit[$j] == 0)
@@ -55,16 +45,12 @@ function encrypt_oneTime($text, $secret)
                     $sum[$z] = 1;
                 else if ($text_spit[$z] == 1 && $secret_spit[$j] == 0)
                     $sum[$z] = 1;
-
-                echo $sum[$z] . " ";
             }
-            echo "<br>";
         } else if ($y > $x) {
             $z = $y - $x;
 
             for ($j = 0; $j < $z; $j++) {
                 $sum[$j] = $secret_spit[$j];
-                echo $sum[$j] . " ";
             }
             for ($j = 0; $z < $y; $j++, $z++) {
                 if ($text_spit[$j] == 0 && $secret_spit[$z] == 0)
@@ -75,10 +61,7 @@ function encrypt_oneTime($text, $secret)
                     $sum[$z] = 1;
                 else if ($text_spit[$j] == 1 && $secret_spit[$z] == 0)
                     $sum[$z] = 1;
-
-                echo $sum[$z] . " ";
             }
-            echo "<br>";
         } else {
             for ($j = 0; $j < $x; $j++) {
                 if ($text_spit[$j] == 0 && $secret_spit[$j] == 0)
@@ -90,40 +73,26 @@ function encrypt_oneTime($text, $secret)
                 else if ($text_spit[$j] == 1 && $secret_spit[$j] == 0)
                     $sum[$j] = 1;
 
-                echo $sum[$j] . " ";
             }
-            echo "<br>";
         }
-        print_r($sum);
-        echo "<br>";
 
 
         $text_secret[$i] = implode("", $sum);
-        print_r($text_secret);
-        echo "<br>";
 
         $text_secret[$i] = bindec($text_secret[$i]);
-        print_r($text_secret);
-        echo "<br>";
 
-        $text_secret[$i] = ($text_secret[$i] % 95) + 32;
-        print_r($text_secret);
-        echo "<br>";
+        $text_secret[$i] = ($text_secret[$i]) + 65;
 
         $new_text[$i] = chr($text_secret[$i]);
-        echo $new_text[$i] . "<br><br><br>";
+        echo $new_text[$i];
         $ciphertext .= $new_text[$i] . "";
         unset($sum);
         unset($text_spit);
         unset($secret_spit);
     }
-    print_r($ciphertext);
     echo "<br><br>";
     return $ciphertext;
 }
-
-//echo "en_text=ATTACKATDAWN || secret=LEMONLEMONLE" . "<br>";
 encrypt_oneTime($en_text, $secret);
 echo "<br> <br>";
-//echo "de_text=LXAOCBEAHNAC || secret=LEMONLEMONLE" . "<br>";
 encrypt_oneTime($de_text, $secret);
